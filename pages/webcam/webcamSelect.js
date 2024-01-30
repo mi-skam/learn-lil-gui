@@ -16,7 +16,7 @@ await webcam.init();
 const switchButton = document.querySelector('#switchButton');
 
 switchButton.disabled = !(webcam.allWebcams.length > 1);
-switchButton.addEventListener('click', webcam.nextWebcam);
+switchButton.addEventListener('click', webcam.nextWebcam.bind(this));
 
 // gui
 const gui = new GUI();
