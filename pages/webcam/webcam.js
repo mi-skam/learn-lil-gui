@@ -1,7 +1,7 @@
 export default class Webcam {
   webcamEl;
   allWebcams = [];
-  active = '';
+  currentWebcam = '';
   currentDeviceId = '';
 
   constructor({ el = '#webcam' } = {}) {
@@ -13,7 +13,7 @@ export default class Webcam {
 
   init = async () => {
     this.allWebcams = await this.getAllWebcams();
-    this.active = await this.#getWebcam();
+    this.currentWebcam = await this.#getWebcam();
     this.currentDeviceId = this.webcamEl.srcObject;
     // activate webcam stream
     navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {

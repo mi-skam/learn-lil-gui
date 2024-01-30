@@ -20,9 +20,13 @@ switchButton.addEventListener('click', webcam.nextWebcam);
 
 // gui
 const gui = new GUI();
-console.log(webcam.allWebcams);
-gui.add(
-  webcam,
-  'currentWebcam',
-  webcam.allWebcams.map(cam => cam.label),
-);
+
+const config = {
+  current: webcam.currentWebcam.label,
+  all: webcam.allWebcams.map(cam => cam.label),
+};
+
+gui
+  .add(config, 'current', config.all)
+  .name('Webcam')
+  .onChange(value => webcam.setWebcamByLabel(value));
