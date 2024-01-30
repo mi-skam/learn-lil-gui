@@ -1,11 +1,11 @@
 export default class Webcam {
   webcamEl;
   allWebcams = [];
-  currentWebcam = '';
+  active = '';
   currentDeviceId = '';
 
   constructor({ el = '#webcam' } = {}) {
-    if (!this.hasGetUserMedia()) {
+    if (!this.#hasGetUserMedia()) {
       throw new Error('No support for webcams detected. Quit.');
     }
     this.webcamEl = document.querySelector(el);
@@ -13,7 +13,7 @@ export default class Webcam {
 
   init = async () => {
     this.allWebcams = await this.getAllWebcams();
-    this.currentWebcam = await this.getCurrentWebcam();
+    this.active = await this.#getWebcam();
     this.currentDeviceId = this.webcamEl.srcObject;
     // activate webcam stream
     navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
@@ -21,7 +21,26 @@ export default class Webcam {
     });
   };
 
-  hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
+  #getWebcam = async () => {
+    return this.allWebcams.find(
+      videoInput => videoInput.deviceId !== this.currentDeviceId,
+    );
+  };
+
+  #hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
+
+  #setWebcam = device => {
+    const constraints = { video: { deviceId: device.deviceId } };
+
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(function (stream) {
+        this.webcamEl.srcObject = stream;
+      })
+      .catch(function (error) {
+        console.error('Error switching camera:', error);
+      });
+  };
 
   getAllWebcams = async () => {
     return navigator.mediaDevices
@@ -37,12 +56,6 @@ export default class Webcam {
       });
   };
 
-  getCurrentWebcam = async () => {
-    return this.allWebcams.find(
-      videoInput => videoInput.deviceId !== this.currentDeviceId,
-    );
-  };
-
   nextWebcam = async () => {
     let nextDevice;
 
@@ -56,21 +69,8 @@ export default class Webcam {
     }
 
     if (nextDevice) {
-      this.setWebcam(nextDevice);
+      this.#setWebcam(nextDevice);
     }
-  };
-
-  setWebcam = device => {
-    const constraints = { video: { deviceId: device.deviceId } };
-
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(function (stream) {
-        this.webcamEl.srcObject = stream;
-      })
-      .catch(function (error) {
-        console.error('Error switching camera:', error);
-      });
   };
 
   setWebcamByLabel = async webcamLabel => {
@@ -80,7 +80,7 @@ export default class Webcam {
       return acc;
     }, '');
     if (webcam) {
-      this.setWebcam(webcam);
+      this.#setWebcam(webcam);
     }
   };
 }
