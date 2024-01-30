@@ -21,4 +21,8 @@ switchButton.addEventListener('click', webcam.nextWebcam);
 // gui
 const gui = new GUI();
 console.log(webcam.allWebcams);
-gui.add(webcam, 'currentWebcam', webcam.allWebcams);
+gui.add(
+  webcam,
+  'currentWebcam',
+  webcam.allWebcams.map(cam => cam.label),
+);
