@@ -1,6 +1,6 @@
 const nextWebcam = async () => {
   const webcamEl = document.querySelector('#webcam');
-  const allVideoInputs = await getVideoInputs();
+  const allVideoInputs = await getAllWebcams();
   let nextDevice;
 
   if (webcamEl.srcObject) {
@@ -33,7 +33,7 @@ const setWebcam = device => {
 
 const setWebcamByLabel = async webcamLabel => {
   // get all webcams
-  const detectedWebcams = await getVideoInputs();
+  const detectedWebcams = await getAllWebcams();
   // get webcam by label
   const webcam = detectedWebcams.reduce((acc, cam) => {
     acc = cam.find(cam => cam.label === webcamLabel);
@@ -44,7 +44,7 @@ const setWebcamByLabel = async webcamLabel => {
   }
 };
 
-const getVideoInputs = async () => {
+const getAllWebcams = async () => {
   return navigator.mediaDevices
     .enumerateDevices()
     .then(function (devices) {
@@ -58,4 +58,4 @@ const getVideoInputs = async () => {
     });
 };
 
-export { nextWebcam, getVideoInputs, setWebcam, setWebcamByLabel };
+export { nextWebcam, getAllWebcams, setWebcam, setWebcamByLabel };

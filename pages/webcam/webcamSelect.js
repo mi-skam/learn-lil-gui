@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { nextWebcam, getVideoInputs } from './webcam';
+import { nextWebcam, getAllWebcams } from './webcam';
 import './style.css';
 
 let allWebcams;
@@ -17,7 +17,7 @@ const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
 if (hasGetUserMedia()) {
   // enable button, if webcams are detected
-  allWebcams = await getVideoInputs();
+  allWebcams = await getAllWebcams();
   switchButton.disabled = !(allWebcams.length > 1);
 
   // switch webcams
