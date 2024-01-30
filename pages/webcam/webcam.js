@@ -75,10 +75,7 @@ export default class Webcam {
 
   setWebcamByLabel = async webcamLabel => {
     // get webcam by label
-    const webcam = this.allWebcams.reduce((acc, cam) => {
-      acc = cam.find(cam => cam.label === webcamLabel);
-      return acc;
-    }, '');
+    const webcam = this.allWebcams.find(cam => cam.label === webcamLabel);
     if (webcam) {
       this.#setWebcam(webcam);
     }
