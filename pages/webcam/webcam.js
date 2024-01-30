@@ -1,13 +1,11 @@
 const nextWebcam = async () => {
-  const webcamEl = document.querySelector('#webcam');
-  const allVideoInputs = await getAllWebcams();
   let nextDevice;
 
   if (webcamEl.srcObject) {
     const currentDeviceId = webcamEl.srcObject
       .getVideoTracks()[0]
       .getSettings().deviceId;
-    nextDevice = allVideoInputs.find(
+    nextDevice = allWebcams.find(
       videoInput => videoInput.deviceId !== currentDeviceId,
     );
   }
@@ -18,7 +16,6 @@ const nextWebcam = async () => {
 };
 
 const setWebcam = device => {
-  const webcamEl = document.querySelector('#webcam');
   const constraints = { video: { deviceId: device.deviceId } };
 
   navigator.mediaDevices
@@ -32,10 +29,8 @@ const setWebcam = device => {
 };
 
 const setWebcamByLabel = async webcamLabel => {
-  // get all webcams
-  const detectedWebcams = await getAllWebcams();
   // get webcam by label
-  const webcam = detectedWebcams.reduce((acc, cam) => {
+  const webcam = allWebcams.reduce((acc, cam) => {
     acc = cam.find(cam => cam.label === webcamLabel);
     return acc;
   }, '');
@@ -57,5 +52,8 @@ const getAllWebcams = async () => {
       console.error('Error enumerating devices:', error);
     });
 };
+
+const webcamEl = document.querySelector('#webcam');
+const allWebcams = await getAllWebcams();
 
 export { nextWebcam, getAllWebcams, setWebcam, setWebcamByLabel };
