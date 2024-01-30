@@ -30,7 +30,9 @@ if (hasGetUserMedia()) {
   });
 }
 
+state.webcams = state.allVideoInputs.map(device => device.label);
+console.log(state.webcams);
+
 const gui = new GUI();
 const webcam = gui.addFolder('Webcam');
-webcam.add(state, 'allVideoInputs');
-console.log(state);
+webcam.add(state, 'webcams');
