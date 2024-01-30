@@ -35,6 +35,7 @@ export default class Webcam {
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then(function (stream) {
+        console.log(this);
         this.webcamEl.srcObject = stream;
       })
       .catch(function (error) {
