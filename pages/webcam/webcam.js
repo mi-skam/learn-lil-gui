@@ -12,9 +12,9 @@ export default class Webcam {
   }
 
   init = async () => {
+    this.currentDeviceId = this.webcamEl.srcObject;
     this.allWebcams = await this.getAllWebcams();
     this.currentWebcam = await this.#getWebcam();
-    this.currentDeviceId = this.webcamEl.srcObject;
     // activate webcam stream
     navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
       this.webcamEl.srcObject = stream;
