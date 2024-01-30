@@ -31,12 +31,13 @@ export default class Webcam {
 
   #setWebcam = device => {
     const constraints = { video: { deviceId: device.deviceId } };
+    const webcamEl = this.webcamEl;
 
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then(function (stream) {
         console.log(this);
-        this.webcamEl.srcObject = stream;
+        webcamEl.srcObject = stream;
       })
       .catch(function (error) {
         console.error('Error switching camera:', error);
