@@ -31,8 +31,7 @@ if (hasGetUserMedia()) {
 }
 
 const gui = new GUI();
-const webcam = gui.addFolder('Webcam');
-webcam.add(
+gui.add(
   window,
   'webcams',
   allWebcams.map(device => device.label),
