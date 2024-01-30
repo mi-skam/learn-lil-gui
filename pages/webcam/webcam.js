@@ -1,59 +1,86 @@
-const nextWebcam = async () => {
-  let nextDevice;
+export default class Webcam {
+  webcamEl;
+  allWebcams = [];
+  currentWebcam = '';
+  currentDeviceId = '';
 
-  if (webcamEl.srcObject) {
-    const currentDeviceId = webcamEl.srcObject
-      .getVideoTracks()[0]
-      .getSettings().deviceId;
-    nextDevice = allWebcams.find(
-      videoInput => videoInput.deviceId !== currentDeviceId,
+  constructor({ el = '#webcam' } = {}) {
+    if (!this.hasGetUserMedia()) {
+      throw new Error('No support for webcams detected. Quit.');
+    }
+    this.webcamEl = document.querySelector(el);
+  }
+
+  init = async () => {
+    this.allWebcams = await this.getAllWebcams();
+    this.currentWebcam = await this.getCurrentWebcam();
+    this.currentDeviceId = this.webcamEl.srcObject;
+    // activate webcam stream
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+      this.webcamEl.srcObject = stream;
+    });
+  };
+
+  hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
+
+  getAllWebcams = async () => {
+    return navigator.mediaDevices
+      .enumerateDevices()
+      .then(function (devices) {
+        const videoDevices = devices.filter(
+          device => device.kind === 'videoinput',
+        );
+        return videoDevices;
+      })
+      .catch(function (error) {
+        console.error('Error enumerating devices:', error);
+      });
+  };
+
+  getCurrentWebcam = async () => {
+    return this.allWebcams.find(
+      videoInput => videoInput.deviceId !== this.currentDeviceId,
     );
-  }
+  };
 
-  if (nextDevice) {
-    setWebcam(nextDevice);
-  }
-};
+  nextWebcam = async () => {
+    let nextDevice;
 
-const setWebcam = device => {
-  const constraints = { video: { deviceId: device.deviceId } };
-
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(function (stream) {
-      webcamEl.srcObject = stream;
-    })
-    .catch(function (error) {
-      console.error('Error switching camera:', error);
-    });
-};
-
-const setWebcamByLabel = async webcamLabel => {
-  // get webcam by label
-  const webcam = allWebcams.reduce((acc, cam) => {
-    acc = cam.find(cam => cam.label === webcamLabel);
-    return acc;
-  }, '');
-  if (webcam) {
-    setWebcam(webcam);
-  }
-};
-
-const getAllWebcams = async () => {
-  return navigator.mediaDevices
-    .enumerateDevices()
-    .then(function (devices) {
-      const videoDevices = devices.filter(
-        device => device.kind === 'videoinput',
+    if (this.webcamEl.srcObject) {
+      this.allWebcams = this.webcamEl
+        .getVideoTracks()[0]
+        .getSettings().deviceId;
+      nextDevice = this.allWebcams.find(
+        videoInput => videoInput.deviceId !== this.currentDeviceId,
       );
-      return videoDevices;
-    })
-    .catch(function (error) {
-      console.error('Error enumerating devices:', error);
-    });
-};
+    }
 
-const webcamEl = document.querySelector('#webcam');
-const allWebcams = await getAllWebcams();
+    if (nextDevice) {
+      this.setWebcam(nextDevice);
+    }
+  };
 
-export { nextWebcam, getAllWebcams, setWebcam, setWebcamByLabel };
+  setWebcam = device => {
+    const constraints = { video: { deviceId: device.deviceId } };
+
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(function (stream) {
+        this.webcamEl.srcObject = stream;
+      })
+      .catch(function (error) {
+        console.error('Error switching camera:', error);
+      });
+  };
+
+  setWebcamByLabel = async webcamLabel => {
+    // get webcam by label
+    const webcam = this.allWebcams.reduce((acc, cam) => {
+      acc = cam.find(cam => cam.label === webcamLabel);
+      return acc;
+    }, '');
+    if (webcam) {
+      this.setWebcam(webcam);
+    }
+  };
+}

@@ -1,38 +1,24 @@
 import GUI from 'lil-gui';
-import { nextWebcam, getAllWebcams } from './webcam';
+import Webcam from './webcam';
 import './style.css';
 
-let allWebcams;
-
-document.querySelector('#app').innerHTML = `
-<p> Webcam demonstration </p>
-<button id="switchButton">Next Webcam</button>
-<video autoplay playsinline id="webcam"></video>
+document.querySelector('body').innerHTML = `
+    <div id="app">
+      <p>Webcam demonstration</p>
+      <button id="switchButton">Next Webcam</button>
+      <video autoplay playsinline id="webcam"></video>
+    </div>
 `;
+// init Webcam instance
+const webcam = new Webcam();
+await webcam.init();
 
-const video = document.querySelector('#webcam');
 const switchButton = document.querySelector('#switchButton');
 
-const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
+switchButton.disabled = !(webcam.allWebcams.length > 1);
+switchButton.addEventListener('click', webcam.nextWebcam);
 
-if (hasGetUserMedia()) {
-  // enable button, if webcams are detected
-  allWebcams = await getAllWebcams();
-  switchButton.disabled = !(allWebcams.length > 1);
-
-  // switch webcams
-  switchButton.addEventListener('click', nextWebcam);
-
-  // enable webcam stream
-  const constraints = { video: true };
-  navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-    video.srcObject = stream;
-  });
-}
-
+// gui
 const gui = new GUI();
-gui.add(
-  window,
-  'webcams',
-  allWebcams.map(device => device.label),
-);
+console.log(webcam.allWebcams);
+gui.add(webcam, 'currentWebcam', webcam.allWebcams);
