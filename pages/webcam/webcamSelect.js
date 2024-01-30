@@ -2,7 +2,7 @@ import GUI from 'lil-gui';
 import { nextWebcam, getVideoInputs } from './webcam';
 import './style.css';
 
-const state = {};
+let allWebcams;
 
 document.querySelector('#app').innerHTML = `
 <p> Webcam demonstration </p>
@@ -17,8 +17,8 @@ const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
 if (hasGetUserMedia()) {
   // enable button, if webcams are detected
-  state.allVideoInputs = await getVideoInputs();
-  switchButton.disabled = !(state.allVideoInputs.length > 1);
+  allWebcams = await getVideoInputs();
+  switchButton.disabled = !(allWebcams.length > 1);
 
   // switch webcams
   switchButton.addEventListener('click', nextWebcam);
@@ -30,9 +30,10 @@ if (hasGetUserMedia()) {
   });
 }
 
-const webcams = state.allVideoInputs.map(device => device.label);
-console.log(state.webcams);
-
 const gui = new GUI();
 const webcam = gui.addFolder('Webcam');
-webcam.add(window, 'webcams', webcams);
+webcam.add(
+  window,
+  'webcams',
+  allWebcams.map(device => device.label),
+);
