@@ -59,17 +59,9 @@ export default class Webcam {
   };
 
   nextWebcam = async () => {
-    let nextDevice;
-
-    if (this.webcamEl.srcObject) {
-      this.allWebcams = this.webcamEl
-        .getVideoTracks()[0]
-        .getSettings().deviceId;
-      nextDevice = this.allWebcams.find(
-        videoInput => videoInput.deviceId !== this.currentDeviceId,
-      );
-    }
-
+    const nextDevice = this.allWebcams.find(
+      device => device.id === this.currentDeviceId,
+    );
     if (nextDevice) {
       this.#setWebcam(nextDevice);
     }
