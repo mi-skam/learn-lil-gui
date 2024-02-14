@@ -39,5 +39,8 @@
   "bugs": {
     "url": "https://github.com/new-objects/learn-lil-gui/issues"
   },
-  "homepage": "https://new-objects.github.io/learn-lil-gui"
+  "homepage": "https://new-objects.github.io/learn-lil-gui",
+  "dependencies": {
+    "@new-objects/libs": "^0.1.0"
+  }
 }
